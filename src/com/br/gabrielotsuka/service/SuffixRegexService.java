@@ -5,7 +5,9 @@ import java.util.Stack;
 
 public class SuffixRegexService {
 
-    public static String infixToPostfix(String infix) {
+    public static String infixToPostfix(String infix) throws Exception {
+        
+        validateParentheses(infix);
         HashMap<Character, Integer> precedence = new HashMap<>();
         precedence.put('*', 3);
         precedence.put('.', 2);
@@ -38,6 +40,17 @@ public class SuffixRegexService {
         }
 
         return postfix.toString();
+    }
+
+    private static void validateParentheses(String infix) throws Exception {
+        int open, close;
+        open = close = 0;
+        for (int i = 0; i < infix.length(); i++) {
+            if (infix.charAt(i) == '(') open++;
+            else if (infix.charAt(i) == ')') close++;
+        }
+        if (open != close)
+            throw new Exception("Parênteses da expressão estão inválidos");
     }
 
 }
