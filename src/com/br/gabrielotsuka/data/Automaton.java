@@ -2,22 +2,12 @@ package com.br.gabrielotsuka.data;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 public class Automaton {
-    private List<String> states;
-    private String alphabet;
-    private List<Rule> rules;
-    private String initialState;
-    private List<String> finalStates;
-
-    public Automaton() {
-        states = emptyList();
-        alphabet = "";
-        rules = emptyList();
-        initialState = "";
-        finalStates = emptyList();
-    }
+    private final List<String> states;
+    private final String alphabet;
+    private final List<Rule> rules;
+    private final String initialState;
+    private final List<String> finalStates;
 
     public Automaton(List<String> states, String alphabet, List<Rule> rules, String initialState, List<String> finalStates) {
         this.states = states;
@@ -45,26 +35,6 @@ public class Automaton {
 
     public String getAlphabet() {
         return alphabet;
-    }
-
-    public void setStates(List<String> states) {
-        this.states = states;
-    }
-
-    public void setAlphabet(String alphabet) {
-        this.alphabet = alphabet;
-    }
-
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
-    }
-
-    public void setInitialState(String initialState) {
-        this.initialState = initialState;
-    }
-
-    public void setFinalStates(List<String> finalStates) {
-        this.finalStates = finalStates;
     }
 
     @Override
