@@ -72,10 +72,11 @@ public class Automaton {
         StringBuilder outputRules = new StringBuilder();
         outputRules.append("[\n");
         for (int i = 0; i < rules.size(); i ++) {
-            outputRules.append("    ").append(rules.get(i).toString()).append("\n");
+            outputRules.append("    ").append(rules.get(i).toString());
             if (i != rules.size()-1) {
-                outputRules.append(",\n");
+                outputRules.append(",");
             }
+            outputRules.append("\n");
         }
         outputRules.append("]");
 
