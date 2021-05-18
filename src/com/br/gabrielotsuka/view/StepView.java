@@ -1,6 +1,7 @@
 package com.br.gabrielotsuka.view;
 
 import com.br.gabrielotsuka.data.Automaton;
+import com.br.gabrielotsuka.repository.RegexRepository;
 import com.br.gabrielotsuka.service.AutomatonService;
 
 import javax.swing.*;
@@ -16,8 +17,10 @@ public class StepView extends JFrame{
     Automaton automaton;
     String sequence;
     AutomatonService automatonService;
+    RegexRepository regexRepository;
 
-    public StepView(Automaton automaton) {
+    public StepView(RegexRepository regexRepository, Automaton automaton) {
+        this.regexRepository = regexRepository;
         this.automatonService = new AutomatonService();
         this.automaton = automaton;
 
@@ -36,20 +39,30 @@ public class StepView extends JFrame{
         infixRegexLabel.setBounds(20, 90, 60, 20);
         add(infixRegexLabel);
 
+        JTextField infixField = new JTextField(regexRepository.getRegularExpressions().get(0));
+        infixField.setBounds(90, 90, 290, 20);
+        infixField.setCaretPosition(0);
+        add(infixField);
+
         JLabel postfixRegexLabel = new JLabel("Posfixa: ");
         postfixRegexLabel.setBounds(20, 140, 60, 20);
         add(postfixRegexLabel);
 
+        JTextField postfixField = new JTextField(regexRepository.getRegularExpressions().get(1));
+        postfixField.setBounds(90, 140, 290, 20);
+        postfixField.setCaretPosition(0);
+        add(postfixField);
+
         JLabel textChain = new JLabel("Cadeia:");
-        textChain.setBounds(20, 220, 55, 30);
+        textChain.setBounds(20, 190, 60, 20);
         add(textChain);
 
         textField = new JTextField();
-        textField.setBounds(78, 225, 205, 20);
+        textField.setBounds(90, 190, 290, 20);
         add(textField);
 
         validateButton.setBorder(BorderFactory.createEtchedBorder());
-        validateButton.setBounds(290, 225 , 90, 20);
+        validateButton.setBounds(170, 225 , 90, 20);
         add(validateButton);
 
         JLabel textAutomaton = new JLabel("AFND-\u03B5");
@@ -89,7 +102,7 @@ public class StepView extends JFrame{
     private void changeAutomatonButtonAction() {
         changeAutomatonButton.addActionListener(e -> {
             dispose();
-            new InitialView();
+            new InitialView(new RegexRepository());
         });
     }
 

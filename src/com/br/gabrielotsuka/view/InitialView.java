@@ -1,6 +1,7 @@
 package com.br.gabrielotsuka.view;
 
 import com.br.gabrielotsuka.data.Automaton;
+import com.br.gabrielotsuka.repository.RegexRepository;
 import com.br.gabrielotsuka.service.ConverterService;
 
 import javax.swing.*;
@@ -12,13 +13,15 @@ import static javax.swing.SwingConstants.CENTER;
 
 public class InitialView extends JFrame implements ActionListener {
 
+    RegexRepository regexRepository;
     JLabel titleLabel = new JLabel("Testador de Expressões Regulares");
     JLabel regexLabel = new JLabel("Regex:");
     JTextField regexTextField = new JTextField();
     JButton validateButton = new JButton("Validar");
     JButton aboutButton = new JButton("Sobre...");
 
-    public InitialView(){
+    public InitialView(RegexRepository regexRepository){
+        this.regexRepository = regexRepository;
         setupFrame();
         setupTitle();
         setupRegexLabel();
@@ -81,10 +84,10 @@ public class InitialView extends JFrame implements ActionListener {
                             " checar se ela pertence ou nao a linguagem representada por eles.\n\n",
                     "Sobre o programa", JOptionPane.INFORMATION_MESSAGE);
         } else if (event.getSource() == validateButton) {
-            ConverterService converterService = new ConverterService();
+            ConverterService converterService = new ConverterService(regexRepository);
             try {
                 Automaton automaton = converterService.convert(regexTextField.getText());
-                new StepView(automaton);
+                new StepView(regexRepository, automaton);
                 dispose();
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(this, exception.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);

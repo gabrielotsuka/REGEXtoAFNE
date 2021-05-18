@@ -2,14 +2,23 @@ package com.br.gabrielotsuka.service;
 
 import com.br.gabrielotsuka.data.Automaton;
 import com.br.gabrielotsuka.data.Node;
+import com.br.gabrielotsuka.repository.RegexRepository;
+
+import java.util.Arrays;
 
 public class ConverterService {
 
     public AutomatonService automatonService = new AutomatonService();
+    RegexRepository regexRepository;
+
+    public ConverterService(RegexRepository regexRepository) {
+        this.regexRepository = regexRepository;
+    }
 
     public Automaton convert(String infixRegex) throws Exception {
         String postfixRegex = SuffixRegexService.infixToPostfix(infixRegex);
         Node expressionTree = ExpressionTreeService.buildExpressionTree(postfixRegex);
+        regexRepository.setRegularExpressions(Arrays.asList(infixRegex, postfixRegex));
         return processNodeAutomaton(expressionTree).automaton;
     }
 
