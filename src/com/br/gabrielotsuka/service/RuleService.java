@@ -1,15 +1,11 @@
 package com.br.gabrielotsuka.service;
 
 import com.br.gabrielotsuka.data.Rule;
-import com.br.gabrielotsuka.data.RuleDTO;
-import com.br.gabrielotsuka.repository.RuleRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RuleService {
-
-    RuleRepository ruleRepository = new RuleRepository();
 
     public List<Rule> getApplicableRule(List<Rule> rules, String currentState, char currentSymbol) throws Exception {
 
@@ -34,13 +30,5 @@ public class RuleService {
 
     private boolean isRuleApplicable(Rule rule, String currentState, char currentSymbol) {
         return rule.getSourceState().equals(currentState) && rule.getSymbol() == currentSymbol;
-    }
-
-    public void addCoveredRule(RuleDTO ruleDTO) {
-        ruleRepository.coveredRules.add(ruleDTO);
-    }
-
-    public void cleanCoveredRules() {
-        ruleRepository.coveredRules = new ArrayList<>();
     }
 }

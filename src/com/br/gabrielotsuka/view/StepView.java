@@ -14,11 +14,9 @@ public class StepView extends JFrame{
     private final JButton sendButton = new JButton("ENVIAR");
     private final JButton changeAutomatonButton = new JButton("TROCAR REGEX");
 
-    private final Automaton automaton;
-
+    Automaton automaton;
     String sequence;
     AutomatonService automatonService;
-    boolean validSequenceFlag;
 
     public StepView(Automaton automaton) {
         this.automatonService = new AutomatonService();
@@ -31,36 +29,36 @@ public class StepView extends JFrame{
         setLayout(null);
 
         JLabel textAutomaton = new JLabel("AFND-\u03B5");
-        textAutomaton.setBounds(20, 10, 400, 30);
+        textAutomaton.setBounds(420, 10, 400, 30);
         textAutomaton.setHorizontalAlignment(SwingConstants.CENTER);
         add(textAutomaton);
 
         JLabel textChain = new JLabel("CADEIA:");
-        textChain.setBounds(420, 10, 55, 30);
+        textChain.setBounds(20, 10, 55, 30);
         add(textChain);
 
         textField = new JTextField();
-        textField.setBounds(478, 15, 205, 20);
+        textField.setBounds(78, 15, 205, 20);
         add(textField);
 
         JScrollPane automatonPanel = new JScrollPane(buildTextArea(automaton.toString()));
-        automatonPanel.setBounds(20, 50, 360, 185);
+        automatonPanel.setBounds(420, 50, 360, 185);
         add(automatonPanel);
 
         JPanel processPanel = new JPanel();
-        processPanel.setBounds(420, 50, 360, 185);
+        processPanel.setBounds(20, 50, 360, 185);
         processPanel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 128)));
         processPanel.setBackground(new Color(255, 255, 255));
         add(processPanel);
 
-        sendButton.setBounds(690, 15 , 90, 20);
+        sendButton.setBounds(290, 15 , 90, 20);
         add(sendButton);
 
-        changeAutomatonButton.setBounds(20, 265, 360, 20);
+        changeAutomatonButton.setBounds(420, 265, 360, 20);
         add(changeAutomatonButton);
 
         finishButton.setBorder(BorderFactory.createEtchedBorder());
-        finishButton.setBounds(560, 245, 80, 40);
+        finishButton.setBounds(160, 245, 80, 40);
         add(finishButton);
 
         finishButton.setEnabled(false);
@@ -84,16 +82,15 @@ public class StepView extends JFrame{
 
     public void finishButtonAction() {
         finishButton.addActionListener(e -> {
-            if (validSequenceFlag){
-                JOptionPane.showMessageDialog(null,
-                        "Cadeia pertence à linguagem representada pelo automato!", "Pertence :D",
-                        JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null,
-                        "Cadeia não pertence à linguagem representada pelo automato!", "Não pertence :(",
-                        JOptionPane.WARNING_MESSAGE);
+            try {
+                automatonService.belongsToLanguage(sequence, automaton);
+            } catch (Exception exception) {
+                if (exception.getMessage().equals("n pertence")){
+                    JOptionPane.showMessageDialog(this, "Cadeia não pertence à linguagem!", "Não pertence :(", JOptionPane.WARNING_MESSAGE);
+                } else if (exception.getMessage().equals("pertence")) {
+                    JOptionPane.showMessageDialog(this, "Cadeia pertence à linguagem!", "Pertence :)", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
-            finishButton.setEnabled(false);
         });
     }
 

@@ -1,24 +1,20 @@
 package com.br.gabrielotsuka.service;
 
 import com.br.gabrielotsuka.data.Automaton;
+import com.br.gabrielotsuka.data.EFechoIndex;
 import com.br.gabrielotsuka.data.Node;
 import com.br.gabrielotsuka.data.Rule;
-import com.br.gabrielotsuka.data.RuleDTO;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 
 public class AutomatonService {
 
     int counter = 0;
-    private boolean sequenceValidate = false;
-    private final RuleService ruleService = new RuleService();
-
+    Automaton automaton;
+    Stack<EFechoIndex> eFechoIndices = new Stack<>();
 
     public Automaton buildEpsilonLeaf() {
         String state = "q" + counter++;
@@ -106,120 +102,59 @@ public class AutomatonService {
     }
 
     public void belongsToLanguage(String sequence, Automaton automaton) throws Exception {
-        List<Character> sequenceRequest = new ArrayList<>();
-
-        for (char item: sequence.toCharArray()) {
-            sequenceRequest.add(item);
+        this.automaton = automaton;
+        Set<String> firstEFecho = calculateEfecho(automaton.getInitialState(), emptySet());
+        for (String state: firstEFecho) {
+            eFechoIndices.add(new EFechoIndex(state, 0));
         }
+        processSequence(sequence);
 
-        if(sequenceRequest.isEmpty()){
-            List<String> initialState = new ArrayList<>();
-            initialState.add(automaton.getInitialState());
-            sequenceValidate = isAcceptable(initialState, automaton.getFinalStates());
-            if(!sequenceValidate){
-                Rule applicableRule = ruleService.getApplicableRuleEmpty(automaton.getRules(), automaton.getInitialState());
-                sequenceValidate = isAcceptable(applicableRule.getTargetStates(), automaton.getFinalStates());
-            }
-
-        }else{
-            processSequence(sequenceRequest,
-                    automaton.getInitialState(),
-                    automaton.getRules(),
-                    automaton.getFinalStates());
-        }
     }
 
-    public List<RuleDTO> getStackSequence(){
-        return ruleService.ruleRepository.coveredRules;
-    }
-
-    public Boolean getSequenceValidate(){
-        return sequenceValidate;
-    }
-
-    private void processSequence(List<Character> sequence,
-                                 String currentState,
-                                 List<Rule> rules,
-                                 List<String> finalStates) throws Exception {
-        int aux = 0;
-
-        for (char currentSymbol : sequence) {
-            aux = aux + 1;
-
-            List<Rule> applicableRule = ruleService.getApplicableRule(rules, currentState, currentSymbol);
-
-            List<String> targetStates = new ArrayList<>();
-            for (Rule afndRule: applicableRule) {
-                targetStates.addAll(afndRule.getTargetStates());
-            }
-
-            ruleService.addCoveredRule(dtoRuleDTO(applicableRule, currentSymbol));
-
-            if(targetStates.size() > 1) {
-                for(Rule afndRule: applicableRule){
-                    for(String targetState : afndRule.getTargetStates()){
-                        if(afndRule.getSymbol() == 'ε'){
-                            if(sequence.size() != 0)
-                                processSequence(
-                                        sequence,
-                                        targetState,
-                                        rules,
-                                        finalStates); //recursão
-                        }else{
-                            if(sequence.subList(aux, sequence.size()).size() != 0)
-                                processSequence(
-                                        sequence.subList(aux, sequence.size()),
-                                        targetState,
-                                        rules,
-                                        finalStates); //recursão
-                        }
+    private Set<String> calculateEfecho(String state, Set<Object> eFechoRequest) {
+        Set<String> eFechoResponse = new HashSet<>(emptySet());
+        eFechoResponse.add(state);
+        for (Rule rule: automaton.getRules()) {
+            if (rule.getSourceState().equals(state) && rule.getSymbol() == '_') {
+                for (String target: rule.getTargetStates()) {
+                    if (!eFechoRequest.contains(target)) {
+                        eFechoResponse.addAll(calculateEfecho(target, eFechoRequest));
                     }
                 }
-            }else{
-                if(targetStates.size() == 1) {
-                    currentState = targetStates.get(0);
-                }else {
-                    break;
+            }
+        }
+        return eFechoResponse;
+    }
+
+    private void processSequence(String sequence) throws Exception {
+        if (eFechoIndices.isEmpty()){
+            throw new Exception("n pertence");
+        }
+
+        EFechoIndex eFechoIndex = eFechoIndices.pop();
+
+        Set<String> eFecho = new HashSet<>(emptySet());
+        if (eFechoIndex.getPosition() == sequence.length()) {
+            if (automaton.getFinalStates().contains(eFechoIndex.getState())) {
+                throw new Exception("pertence");
+            } else {
+                processSequence(sequence);
+            }
+        } else if (eFechoIndex.getPosition() != sequence.length()) {
+            char symbol = sequence.charAt(eFechoIndex.getPosition());
+            for (Rule rule: automaton.getRules()) {
+                if (rule.getSourceState().equals(eFechoIndex.getState()) && rule.getSymbol() == symbol) {
+                    for (String targetState : rule.getTargetStates()) {
+                        eFecho.addAll(calculateEfecho(targetState, emptySet()));
+                    }
+                    for (String eFechoState: eFecho) {
+                        eFechoIndices.add(new EFechoIndex(eFechoState, eFechoIndex.getPosition()+1));
+                    }
                 }
             }
+            processSequence(sequence);
         }
-        isAcceptableState(finalStates);
-        System.out.println("------------------------------");
-        System.out.println(sequenceValidate);
-        System.out.println("------------------------------");
-    }
 
-    private void isAcceptableState(List<String> finalStates){
-        if(!sequenceValidate)
-            sequenceValidate = isAcceptable(getStackSequence().get(getStackSequence().size()-1).getTargetStates(), finalStates);
-    }
 
-    private boolean isAcceptable(List<String> state, List<String> acceptableStates) {
-        for (String item: state) {
-            return acceptableStates.contains(item);
-        }
-        return false;
-    }
-
-    private RuleDTO dtoRuleDTO(List<Rule> applicableRules, char currentSymbol){
-        boolean emptyStateRule = false;
-        List<String> targetState = new ArrayList<>();
-        String sourceState = null;
-
-        for (Rule afndRule : applicableRules) {
-            if(afndRule.getSymbol() == 'ε' && !afndRule.getTargetStates().isEmpty()){
-                emptyStateRule = true;
-            }
-            targetState.addAll(afndRule.getTargetStates());
-            sourceState = afndRule.getSourceState();
-        }
-        RuleDTO applicableRule = new RuleDTO(sourceState, currentSymbol, targetState, emptyStateRule);
-        System.out.println("-------");
-        System.out.println(applicableRule.getSourceState());
-        System.out.println(applicableRule.getSymbol());
-        System.out.println(applicableRule.getTargetStates());
-        System.out.println(applicableRule.getEmptyStateRule());
-        System.out.println("-------");
-        return applicableRule;
     }
 }
