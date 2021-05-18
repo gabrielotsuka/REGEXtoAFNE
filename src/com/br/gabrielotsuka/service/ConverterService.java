@@ -15,7 +15,10 @@ public class ConverterService {
 
     private Node processNodeAutomaton(Node node) {
         if (node.right == null && node.left == null) {
-            node.automaton = automatonService.buildLeaf(node.value);
+            if (node.value == '_')
+                node.automaton = automatonService.buildEpsilonLeaf();
+            else
+                node.automaton = automatonService.buildLeaf(node.value);
             return node;
         } else {
             if (node.value == '+') {

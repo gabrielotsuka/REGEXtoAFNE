@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class AutomatonService {
@@ -18,6 +19,17 @@ public class AutomatonService {
     private boolean sequenceValidate = false;
     private final RuleService ruleService = new RuleService();
 
+
+    public Automaton buildEpsilonLeaf() {
+        String state = "q" + counter++;
+        return new Automaton(
+                singletonList(state),
+                "",
+                emptyList(),
+                state,
+                singletonList(state)
+        );
+    }
 
     public Automaton buildLeaf(char value) {
         String init = "q" + counter++;
