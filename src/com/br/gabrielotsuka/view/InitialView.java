@@ -72,10 +72,11 @@ public class InitialView extends JFrame implements ActionListener {
                             "funcionamento de Automatos Finitos \nNão Deterministicos com 'ε' Transições(AFNE) " +
                             "que representam\numa expressão regular forma genérica.\nPara tal, deve-se inserir " +
                             "uma expressão regular válida contendo os possíveis\n" +
-                            " operadores e qualquer símbolo que não seja 'ε':\n" +
+                            " operadores e qualquer símbolo alfanumérico:\n" +
                             "   - Concatenação: .\n" +
                             "   - Fechamento: *\n" +
                             "   - União: +\n" +
+                            "   - Transição vazia: _\n" +
                             "Posteriormente, basta adicionar as cadeias que deseja testar, tendo a\npossibilidade de" +
                             " checar se ela pertence ou nao a linguagem representada por eles.\n\n",
                     "Sobre o programa", JOptionPane.INFORMATION_MESSAGE);
@@ -84,6 +85,8 @@ public class InitialView extends JFrame implements ActionListener {
             try {
                 Automaton automaton = converterService.convert(regexTextField.getText());
                 System.out.println(automaton);
+                new StepView(automaton);
+                dispose();
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(this, exception.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }

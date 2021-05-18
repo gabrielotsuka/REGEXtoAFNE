@@ -66,4 +66,19 @@ public class Automaton {
                 "q\u2080: " + initialState + ",\n" +
                 "F: " + finalStates + "\n";
     }
+
+    public void validateSequence(String sequence) throws Exception {
+        for (int i = 0; i < sequence.length(); i++) {
+            boolean found = false;
+            for (int j = 0; j < alphabet.length(); j++) {
+                if (sequence.charAt(i) == alphabet.charAt(j)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new Exception("Elementos da cadeia devem pertencer ao alfabeto!");
+            }
+        }
+    }
 }

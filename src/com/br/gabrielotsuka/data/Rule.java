@@ -13,6 +13,18 @@ public class Rule {
         this.targetStates = targetStates;
     }
 
+    public String getSourceState() {
+        return sourceState;
+    }
+
+    public char getSymbol() {
+        return symbol;
+    }
+
+    public List<String> getTargetStates() {
+        return targetStates;
+    }
+
     @Override
     public String toString() {
         return sourceState + " \u00D7 " + symbol + " \u2192 " + targetStates;
