@@ -84,7 +84,6 @@ public class InitialView extends JFrame implements ActionListener {
             ConverterService converterService = new ConverterService();
             try {
                 Automaton automaton = converterService.convert(regexTextField.getText());
-                System.out.println(automaton);
                 new StepView(automaton);
                 dispose();
             } catch (Exception exception) {

@@ -27,6 +27,10 @@ public class Rule {
 
     @Override
     public String toString() {
-        return sourceState + " \u00D7 " + symbol + " \u2192 " + targetStates;
+        if (symbol == '_') {
+            return sourceState + " \u00D7 " + "\u03B5" + " \u2192 " + targetStates;
+        } else {
+            return sourceState + " \u00D7 " + symbol + " \u2192 " + targetStates;
+        }
     }
 }

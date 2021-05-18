@@ -26,32 +26,41 @@ public class StepView extends JFrame{
 
         setVisible(true);
         setResizable(false);
-        setSize(400, 335);
+        setSize(800, 335);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
 
-        JLabel text = new JLabel("CADEIA:");
-        text.setBounds(20, 10, 55, 30);
-        add(text);
+        JLabel textAutomaton = new JLabel("AFND-\u03B5");
+        textAutomaton.setBounds(20, 10, 400, 30);
+        textAutomaton.setHorizontalAlignment(SwingConstants.CENTER);
+        add(textAutomaton);
+
+        JLabel textChain = new JLabel("CADEIA:");
+        textChain.setBounds(420, 10, 55, 30);
+        add(textChain);
 
         textField = new JTextField();
-        textField.setBounds(78, 15, 205, 20);
+        textField.setBounds(478, 15, 205, 20);
         add(textField);
 
-        JPanel panel = new JPanel();
-        panel.setBounds(20, 50, 360, 150);
-        panel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 128)));
-        panel.setBackground(new Color(255, 255, 255));
-        add(panel);
+        JScrollPane automatonPanel = new JScrollPane(buildTextArea(automaton.toString()));
+        automatonPanel.setBounds(20, 50, 360, 185);
+        add(automatonPanel);
 
-        sendButton.setBounds(290, 15 , 90, 20);
+        JPanel processPanel = new JPanel();
+        processPanel.setBounds(420, 50, 360, 185);
+        processPanel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 128)));
+        processPanel.setBackground(new Color(255, 255, 255));
+        add(processPanel);
+
+        sendButton.setBounds(690, 15 , 90, 20);
         add(sendButton);
 
         changeAutomatonButton.setBounds(20, 265, 360, 20);
         add(changeAutomatonButton);
 
         finishButton.setBorder(BorderFactory.createEtchedBorder());
-        finishButton.setBounds(160, 210, 80, 40);
+        finishButton.setBounds(560, 245, 80, 40);
         add(finishButton);
 
         finishButton.setEnabled(false);
@@ -93,5 +102,17 @@ public class StepView extends JFrame{
             dispose();
             new InitialView();
         });
+    }
+
+    public JTextArea buildTextArea(String text) {
+        JTextArea textArea = new JTextArea();
+        textArea.setText(text);
+        textArea.setWrapStyleWord(true);
+        textArea.setBorder(BorderFactory.createBevelBorder(1));
+        textArea.setFont(new Font("", Font.PLAIN, 15));
+        textArea.setEditable(false);
+        textArea.setCaretPosition(0);
+
+        return textArea;
     }
 }
