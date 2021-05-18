@@ -10,8 +10,7 @@ public class StepView extends JFrame{
 
     private final JTextField textField;
 
-    private final JButton finishButton = new JButton("FINALIZAR");
-    private final JButton sendButton = new JButton("ENVIAR");
+    private final JButton validateButton = new JButton("VALIDAR");
     private final JButton changeAutomatonButton = new JButton("TROCAR REGEX");
 
     Automaton automaton;
@@ -24,71 +23,64 @@ public class StepView extends JFrame{
 
         setVisible(true);
         setResizable(false);
-        setSize(800, 335);
+        setSize(800, 340);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
 
-        JLabel textAutomaton = new JLabel("AFND-\u03B5");
-        textAutomaton.setBounds(420, 10, 400, 30);
-        textAutomaton.setHorizontalAlignment(SwingConstants.CENTER);
-        add(textAutomaton);
+        JLabel textRegex = new JLabel("Expressão Regular");
+        textRegex.setBounds(20, 10, 360, 30);
+        textRegex.setHorizontalAlignment(SwingConstants.CENTER);
+        add(textRegex);
 
-        JLabel textChain = new JLabel("CADEIA:");
-        textChain.setBounds(20, 10, 55, 30);
+        JLabel infixRegexLabel = new JLabel("Infixa: ");
+        infixRegexLabel.setBounds(20, 90, 60, 20);
+        add(infixRegexLabel);
+
+        JLabel postfixRegexLabel = new JLabel("Posfixa: ");
+        postfixRegexLabel.setBounds(20, 140, 60, 20);
+        add(postfixRegexLabel);
+
+        JLabel textChain = new JLabel("Cadeia:");
+        textChain.setBounds(20, 220, 55, 30);
         add(textChain);
 
         textField = new JTextField();
-        textField.setBounds(78, 15, 205, 20);
+        textField.setBounds(78, 225, 205, 20);
         add(textField);
 
+        validateButton.setBorder(BorderFactory.createEtchedBorder());
+        validateButton.setBounds(290, 225 , 90, 20);
+        add(validateButton);
+
+        JLabel textAutomaton = new JLabel("AFND-\u03B5");
+        textAutomaton.setBounds(420, 10, 360, 30);
+        textAutomaton.setHorizontalAlignment(SwingConstants.CENTER);
+        add(textAutomaton);
+
         JScrollPane automatonPanel = new JScrollPane(buildTextArea(automaton.toString()));
-        automatonPanel.setBounds(420, 50, 360, 185);
+        automatonPanel.setBounds(420, 50, 355, 195);
         add(automatonPanel);
 
-        JPanel processPanel = new JPanel();
-        processPanel.setBounds(20, 50, 360, 185);
-        processPanel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 128)));
-        processPanel.setBackground(new Color(255, 255, 255));
-        add(processPanel);
-
-        sendButton.setBounds(290, 15 , 90, 20);
-        add(sendButton);
-
-        changeAutomatonButton.setBounds(420, 265, 360, 20);
+        changeAutomatonButton.setBounds(20, 265, 760, 20);
         add(changeAutomatonButton);
 
-        finishButton.setBorder(BorderFactory.createEtchedBorder());
-        finishButton.setBounds(160, 245, 80, 40);
-        add(finishButton);
-
-        finishButton.setEnabled(false);
-
-        this.sendButtonAction();
-        this.finishButtonAction();
+        this.validateButtonAction();
         this.changeAutomatonButtonAction();
     }
 
-    public void sendButtonAction() {
-        sendButton.addActionListener(event -> {
+    public void validateButtonAction() {
+        validateButton.addActionListener(e -> {
             try {
                 sequence = textField.getText();
                 automaton.validateSequence(sequence);
-                finishButton.setEnabled(true);
-            } catch (Exception exception) {
-                JOptionPane.showMessageDialog(this, exception.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-    }
-
-    public void finishButtonAction() {
-        finishButton.addActionListener(e -> {
-            try {
                 automatonService.belongsToLanguage(sequence, automaton);
             } catch (Exception exception) {
                 if (exception.getMessage().equals("n pertence")){
                     JOptionPane.showMessageDialog(this, "Cadeia não pertence à linguagem!", "Não pertence :(", JOptionPane.WARNING_MESSAGE);
                 } else if (exception.getMessage().equals("pertence")) {
                     JOptionPane.showMessageDialog(this, "Cadeia pertence à linguagem!", "Pertence :)", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, exception.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -107,7 +99,6 @@ public class StepView extends JFrame{
         textArea.setWrapStyleWord(true);
         textArea.setBorder(BorderFactory.createBevelBorder(1));
         textArea.setFont(new Font("", Font.PLAIN, 15));
-        textArea.setEditable(false);
         textArea.setCaretPosition(0);
 
         return textArea;
