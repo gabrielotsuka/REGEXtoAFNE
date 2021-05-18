@@ -104,7 +104,7 @@ public class AutomatonService {
     public void belongsToLanguage(String sequence, Automaton automaton) throws Exception {
         this.automaton = automaton;
         Set<String> firstEFecho = calculateEfecho(automaton.getInitialState(), emptySet());
-        for (String state: firstEFecho) {
+        for (String state: firstEFecho) { //Adiciono todos os possíveis estados iniciais lendo a posição 0 da cadeia
             eFechoIndices.add(new EFechoIndex(state, 0));
         }
         processSequence(sequence);
@@ -115,9 +115,9 @@ public class AutomatonService {
         Set<String> eFechoResponse = new HashSet<>(emptySet());
         eFechoResponse.add(state);
         for (Rule rule: automaton.getRules()) {
-            if (rule.getSourceState().equals(state) && rule.getSymbol() == '_') {
+            if (rule.getSourceState().equals(state) && rule.getSymbol() == '_') { // Encontro regras com transição vazia a partir do estado
                 for (String target: rule.getTargetStates()) {
-                    if (!eFechoRequest.contains(target)) {
+                    if (!eFechoRequest.contains(target)) { // Se ainda não tenho no eFecho calculo recursivamente os próximos itens
                         eFechoResponse.addAll(calculateEfecho(target, eFechoRequest));
                     }
                 }
@@ -127,27 +127,27 @@ public class AutomatonService {
     }
 
     private void processSequence(String sequence) throws Exception {
-        if (eFechoIndices.isEmpty()){
+        if (eFechoIndices.isEmpty()){ //não tenho mais pra onde ir
             throw new Exception("n pertence");
         }
 
         EFechoIndex eFechoIndex = eFechoIndices.pop();
 
         Set<String> eFecho = new HashSet<>(emptySet());
-        if (eFechoIndex.getPosition() == sequence.length()) {
-            if (automaton.getFinalStates().contains(eFechoIndex.getState())) {
+        if (eFechoIndex.getPosition() == sequence.length()) { // terminei de ler a cadeia
+            if (automaton.getFinalStates().contains(eFechoIndex.getState())) { // estado atual é estado de aceitação
                 throw new Exception("pertence");
-            } else {
+            } else { //busco as próximas possibilidades da pilha de efecho
                 processSequence(sequence);
             }
-        } else if (eFechoIndex.getPosition() != sequence.length()) {
-            char symbol = sequence.charAt(eFechoIndex.getPosition());
+        } else { // se não é o fim da cadeia
+            char symbol = sequence.charAt(eFechoIndex.getPosition()); // busco o símbolo na posição do efecho do topo da pilha
             for (Rule rule: automaton.getRules()) {
-                if (rule.getSourceState().equals(eFechoIndex.getState()) && rule.getSymbol() == symbol) {
-                    for (String targetState : rule.getTargetStates()) {
+                if (rule.getSourceState().equals(eFechoIndex.getState()) && rule.getSymbol() == symbol) { // encontro regra aplicável
+                    for (String targetState : rule.getTargetStates()) { //calculo novo e fecho
                         eFecho.addAll(calculateEfecho(targetState, emptySet()));
                     }
-                    for (String eFechoState: eFecho) {
+                    for (String eFechoState: eFecho) { // adiciono os novos estados lendo a próxima posição da cadeia
                         eFechoIndices.add(new EFechoIndex(eFechoState, eFechoIndex.getPosition()+1));
                     }
                 }
