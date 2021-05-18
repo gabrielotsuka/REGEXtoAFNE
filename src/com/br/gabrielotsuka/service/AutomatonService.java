@@ -14,7 +14,7 @@ public class AutomatonService {
 
     int counter = 0;
     Automaton automaton;
-    Stack<EFechoIndex> eFechoIndices = new Stack<>();
+    Stack<EFechoIndex> eFechoIndices;
 
     public Automaton buildEpsilonLeaf() {
         String state = "q" + counter++;
@@ -103,6 +103,7 @@ public class AutomatonService {
 
     public void belongsToLanguage(String sequence, Automaton automaton) throws Exception {
         this.automaton = automaton;
+        eFechoIndices = new Stack<>();
         Set<String> firstEFecho = calculateEfecho(automaton.getInitialState(), emptySet());
         for (String state: firstEFecho) { //Adiciono todos os possíveis estados iniciais lendo a posição 0 da cadeia
             eFechoIndices.add(new EFechoIndex(state, 0));

@@ -102,7 +102,7 @@ public class StepView extends JFrame{
     private void changeAutomatonButtonAction() {
         changeAutomatonButton.addActionListener(e -> {
             dispose();
-            new InitialView(new RegexRepository());
+            new InitialView();
         });
     }
 
