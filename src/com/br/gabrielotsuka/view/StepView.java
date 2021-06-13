@@ -85,7 +85,9 @@ public class StepView extends JFrame{
         validateButton.addActionListener(e -> {
             try {
                 sequence = textField.getText();
-                automaton.validateSequence(sequence);
+                if (!automaton.getAlphabet().isEmpty()){
+                    automaton.validateSequence(sequence);
+                }
                 automatonService.belongsToLanguage(sequence, automaton);
             } catch (Exception exception) {
                 if (exception.getMessage().equals("n pertence")){

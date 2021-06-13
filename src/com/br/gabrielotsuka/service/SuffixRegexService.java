@@ -8,6 +8,7 @@ public class SuffixRegexService {
     public static String infixToPostfix(String infix) throws Exception {
         
         validateParentheses(infix);
+        validateEmptyRegex(infix);
         HashMap<Character, Integer> precedence = new HashMap<>();
         precedence.put('*', 3);
         precedence.put('.', 2);
@@ -40,6 +41,18 @@ public class SuffixRegexService {
         }
 
         return postfix.toString();
+    }
+
+    private static void validateEmptyRegex(String chain) throws Exception {
+        int counter = 0;
+        for (int i = 0; i < chain.length(); i++) {
+            if (chain.charAt(i) == '#'){
+                counter++;
+            }
+        }
+        if (counter > 0 && chain.length() > 1) {
+            throw new Exception("# representa conjunto vazio, e não pode ter outros caracteres!");
+        }
     }
 
     private static void validateParentheses(String infix) throws Exception {

@@ -18,7 +18,11 @@ public class ConverterService {
     public Automaton convert(String infixRegex) throws Exception {
         String postfixRegex = SuffixRegexService.infixToPostfix(infixRegex);
         Node expressionTree = ExpressionTreeService.buildExpressionTree(postfixRegex);
-        regexRepository.setRegularExpressions(Arrays.asList(infixRegex, postfixRegex));
+        if (infixRegex.equals("#")) {
+            regexRepository.setRegularExpressions(Arrays.asList("L(E) = ∅", "L(E) = ∅"));
+        } else {
+            regexRepository.setRegularExpressions(Arrays.asList(infixRegex, postfixRegex));
+        }
         return processNodeAutomaton(expressionTree).automaton;
     }
 
@@ -26,6 +30,8 @@ public class ConverterService {
         if (node.right == null && node.left == null) {
             if (node.value == '_')
                 node.automaton = automatonService.buildEpsilonLeaf();
+            else if (node.value == '#')
+                node.automaton = automatonService.buildEmptySet();
             else
                 node.automaton = automatonService.buildLeaf(node.value);
             return node;

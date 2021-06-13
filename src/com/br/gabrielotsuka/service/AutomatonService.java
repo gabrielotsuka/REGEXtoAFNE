@@ -27,6 +27,17 @@ public class AutomatonService {
         );
     }
 
+    public Automaton buildEmptySet() {
+        String state = "q" + counter++;
+        return new Automaton(
+                singletonList(state),
+                "",
+                emptyList(),
+                state,
+                emptyList()
+        );
+    }
+
     public Automaton buildLeaf(char value) {
         String init = "q" + counter++;
         String fin = "q" + counter++;
